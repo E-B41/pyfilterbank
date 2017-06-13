@@ -562,44 +562,44 @@ class ThirdOctFFTLevel:
         self.fs = fs
 
         # following should go into some functions:
-        kmin = 11 + int(10*np.log10(fmin))
-        kmax = 11 + int(10*np.log10(fmax))
+        kmin = 11 + int(10 * np.log10(fmin))
+        kmax = 11 + int(10 * np.log10(fmax))
         f_terz = standardized_nominal_frequencies[kmin:kmax]
         n = int(1 + kmax - kmin)
-        halfbw = 2**(1.0/6)
-        df = fs/nfft
+        halfbw = 2**(1.0 / 6)
+        df = fs / nfft
         idx_lower = np.zeros(n)
         idx_lower[0] = 10 + np.round((
-            standardized_nominal_frequencies[kmin]/halfbw)/df)
+            standardized_nominal_frequencies[kmin] / halfbw) / df)
 
         idx_upper = 10 + np.round(
-            halfbw*standardized_nominal_frequencies[kmin:kmax]/df)
-        idx_lower[1:n] = idx_upper[0:n-1] + 1
+            halfbw * standardized_nominal_frequencies[kmin:kmax] / df)
+        idx_lower[1:n] = idx_upper[0:n - 1] + 1
 
         upperedge = halfbw * standardized_nominal_frequencies[kmax]
-        print(idx_upper[0]-idx_lower[0])
-        #if idx_upper(1) - idx_lower(1) < 4:
-        #    raise ValueError('Too few FFT lines per frequency band')
+        print(idx_upper[0] - idx_lower[0])
+        # if idx_upper(1) - idx_lower(1) < 4:
+        #     raise ValueError('Too few FFT lines per frequency band')
 
-        M = np.zeros((n, nfft/2+1))
+        M = np.zeros((n, int(nfft / 2 + 1)))
 
-        for cc in range(n-1):
+        for cc in range(n - 1):
             kk = range(int(idx_lower[cc]), int(idx_upper[cc]))
-            M[cc, kk] = 2.0/(self.nfft/2+1)
+            M[cc, kk] = 2.0 / (self.nfft / 2 + 1)
             if kk[0] == 0:
-                M[cc, kk[0]] = 1.0/(self.nfft/2+1)
+                M[cc, kk[0]] = 1.0 / (self.nfft / 2 + 1)
 
         self.M = M
         self.f_terz = f_terz
 
     def filter(self, x):
-        Xsq = np.abs(rfft(x, self.nfft/2 + 1))**2
-        return 10*np.log10(np.dot(self.M, Xsq))
+        Xsq = np.abs(rfft(x, int(self.nfft / 2 + 1)))**2
+        return 10 * np.log10(np.dot(self.M, Xsq))
 
 
 def print_parseval(x, X):
-    print(np.sum(x*x))
-    print(np.sum(X*X))
+    print(np.sum(x * x))
+    print(np.sum(X * X))
 
 
 def example_plot():
